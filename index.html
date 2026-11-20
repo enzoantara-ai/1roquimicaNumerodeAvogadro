@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misión Avogadro · Química 1.° de secundaria</title>
+<style>
+  :root{
+    --ink:#14213D;
+    --paper:#EEF3F9;
+    --card:#FFFFFF;
+    --sun:#FCA311;
+    --sun-dark:#D98300;
+    --teal:#0B7A75;
+    --ok:#1B8A4B;
+    --ok-bg:#E3F5EA;
+    --bad:#C0392B;
+    --bad-bg:#FCE7E4;
+    --line:#C9D6E6;
+    --muted:#4A5B78;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+    font-size:17px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 56px}
+  .screen[hidden]{display:none}
+  h1,h2,h3{line-height:1.2;margin:0 0 .5em}
+  sup{font-size:.7em;line-height:0}
+  sub{font-size:.7em;line-height:0}
+
+  /* Inicio */
+  .hero{
+    background:var(--ink);
+    color:#fff;
+    border-radius:22px;
+    padding:30px 24px 26px;
+    text-align:center;
+  }
+  .hero .kicker{margin:0 0 6px;color:#BFD0EA;font-size:1rem}
+  .hero h1{font-size:clamp(1.6rem,5.5vw,2.3rem);margin-bottom:.2em}
+  .big-number{
+    font-size:clamp(2.6rem,12vw,4.8rem);
+    font-weight:800;
+    letter-spacing:-.02em;
+    color:var(--sun);
+    margin:10px 0 4px;
+    line-height:1.05;
+  }
+  .hero .sub{margin:0;color:#DCE6F5}
+  .card{
+    background:var(--card);
+    border:2px solid var(--line);
+    border-radius:18px;
+    padding:20px 20px 18px;
+    margin-top:16px;
+  }
+  .card h2{font-size:1.25rem}
+  .steps{margin:0;padding-left:1.3em}
+  .steps li{margin:.45em 0}
+  .pair-box{
+    background:#FFF4DB;
+    border:2px solid var(--sun);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-top:14px;
+  }
+  .pair-box h3{font-size:1.05rem;margin-bottom:.3em}
+  .pair-box p{margin:.3em 0}
+
+  .btn{
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+    border:0;
+    border-radius:12px;
+    padding:14px 24px;
+    background:var(--sun);
+    color:var(--ink);
+    font-size:1.05rem;
+  }
+  .btn:hover{background:var(--sun-dark)}
+  .btn.secondary{background:#fff;border:2px solid var(--ink)}
+  .btn.secondary:hover{background:#E8EEF7}
+  .btn:focus-visible,.opt:focus-visible,summary:focus-visible{
+    outline:3px solid var(--teal);
+    outline-offset:3px;
+  }
+  .center{text-align:center;margin-top:22px}
+
+  /* Juego */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    font-weight:700;margin-bottom:8px;
+  }
+  .progress{height:12px;background:#D5DFEC;border-radius:99px;overflow:hidden}
+  .progress > div{height:100%;width:0;background:var(--teal);border-radius:99px;transition:width .3s}
+  .qcard{margin-top:16px}
+  .qnum{color:var(--muted);font-size:.95rem;margin:0 0 6px}
+  .qtext{font-size:1.25rem;font-weight:700;margin:0 0 14px}
+  .opts{display:grid;gap:10px}
+  .opt{
+    font:inherit;
+    text-align:left;
+    display:flex;gap:12px;align-items:center;
+    width:100%;
+    background:#fff;
+    color:var(--ink);
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:13px 14px;
+    cursor:pointer;
+    font-size:1.05rem;
+  }
+  .opt:hover:not(:disabled){border-color:var(--teal);background:#F1FAF9}
+  .opt .letter{
+    flex:none;width:32px;height:32px;border-radius:50%;
+    background:#E4ECF7;display:grid;place-items:center;font-weight:800;
+  }
+  .opt.correct{background:var(--ok-bg);border-color:var(--ok)}
+  .opt.correct .letter{background:var(--ok);color:#fff}
+  .opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+  .opt.wrong .letter{background:var(--bad);color:#fff}
+  .opt:disabled{cursor:default}
+  .opt.dim{opacity:.6}
+
+  .tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .tip{
+    margin-top:12px;
+    background:#EAF6F5;
+    border-left:6px solid var(--teal);
+    border-radius:8px;
+    padding:10px 14px;
+  }
+  .feedback{
+    margin-top:16px;
+    border-radius:14px;
+    padding:14px 16px;
+  }
+  .feedback.ok{background:var(--ok-bg);border:2px solid var(--ok)}
+  .feedback.no{background:var(--bad-bg);border:2px solid var(--bad)}
+  .feedback h3{font-size:1.1rem;margin-bottom:.3em}
+  .feedback .sol{margin:.4em 0 0}
+  details.masses{margin-top:16px}
+  details.masses summary{cursor:pointer;font-weight:700}
+  table.masses{border-collapse:collapse;margin-top:10px;width:100%}
+  table.masses th,table.masses td{border:1px solid var(--line);padding:6px 10px;text-align:center}
+  table.masses th{background:#E4ECF7}
+
+  /* Final */
+  .score-card{text-align:center}
+  .score{font-size:clamp(3rem,14vw,5rem);font-weight:800;color:var(--teal);line-height:1}
+  .review-item{
+    border:2px solid var(--line);
+    border-radius:14px;
+    padding:12px 16px;
+    margin-top:12px;
+    background:#fff;
+  }
+  .review-item.ok{border-color:var(--ok)}
+  .review-item.no{border-color:var(--bad)}
+  .review-item h3{font-size:1.02rem;margin-bottom:.3em}
+  .tag{font-weight:800}
+  .review-item.ok .tag{color:var(--ok)}
+  .review-item.no .tag{color:var(--bad)}
+  .review-item p{margin:.3em 0}
+
+  @media (max-width:480px){
+    body{font-size:16px}
+    .card{padding:16px 14px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .progress > div{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- PANTALLA DE INICIO -->
+  <section id="start" class="screen">
+    <div class="hero">
+      <p class="kicker">Química · 1.° de secundaria</p>
+      <h1>Misión Avogadro</h1>
+      <div class="big-number">6,023 × 10<sup>23</sup></div>
+      <p class="sub">Ese es el número N. Hoy aprenderás a contar átomos y moléculas… ¡pesando!</p>
+    </div>
+
+    <div class="card">
+      <h2>Cómo se juega</h2>
+      <ol class="steps">
+        <li>Ten a la mano <strong>cuaderno, lápiz y calculadora</strong>. Los problemas se resuelven con regla de tres.</li>
+        <li>Lee la pregunta y elige una opción. Verás al instante si acertaste y el <strong>paso a paso</strong>.</li>
+        <li>Si te atascas, toca <strong>«Ver pista»</strong>. No quita puntos.</li>
+        <li>Son <strong>10 preguntas</strong>. Cada acierto suma 1 punto.</li>
+        <li>Al final verás tu puntaje y los <strong>10 ejercicios resueltos</strong>.</li>
+        <li>Puedes <strong>jugar las veces que quieras</strong>: las opciones cambian de lugar en cada partida. Tu meta: 10 de 10.</li>
+      </ol>
+
+      <div class="pair-box">
+        <h3>Dinámica en pareja: «Duelo de calculadoras»</h3>
+        <p>Siéntense de dos en dos con una sola pantalla.</p>
+        <p><strong>1.</strong> Cada uno resuelve el problema en su cuaderno, sin mirar al otro.</p>
+        <p><strong>2.</strong> Comparen resultados. Si son distintos, busquen juntos dónde está la diferencia.</p>
+        <p><strong>3.</strong> Elijan la opción en la pantalla. Gana 1 punto extra quien explique mejor cómo lo hizo.</p>
+      </div>
+
+      <details class="masses">
+        <summary>Tabla de masas atómicas que necesitas</summary>
+        <table class="masses">
+          <tr><th>H</th><th>C</th><th>O</th><th>Na</th><th>S</th><th>Ca</th><th>Br</th></tr>
+          <tr><td>1</td><td>12</td><td>16</td><td>23</td><td>32</td><td>40</td><td>80</td></tr>
+        </table>
+      </details>
+    </div>
+
+    <div class="center"><button class="btn" id="btnStart" type="button">Empezar</button></div>
+  </section>
+
+  <!-- PANTALLA DE JUEGO -->
+  <section id="quiz" class="screen" hidden>
+    <div class="topbar">
+      <span id="qCounter">Pregunta 1 de 10</span>
+      <span id="qScore">Puntos: 0</span>
+    </div>
+    <div class="progress" role="progressbar" aria-label="Avance del juego" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progressWrap">
+      <div id="progressBar"></div>
+    </div>
+
+    <div class="card qcard">
+      <p class="qnum" id="qNum"></p>
+      <p class="qtext" id="qText"></p>
+      <div class="opts" id="opts"></div>
+
+      <div class="tools">
+        <button class="btn secondary" type="button" id="btnHint">Ver pista</button>
+      </div>
+      <div class="tip" id="hintBox" hidden></div>
+
+      <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+    </div>
+
+    <details class="masses card" style="padding:14px 20px">
+      <summary>Tabla de masas atómicas</summary>
+      <table class="masses">
+        <tr><th>H</th><th>C</th><th>O</th><th>Na</th><th>S</th><th>Ca</th><th>Br</th></tr>
+        <tr><td>1</td><td>12</td><td>16</td><td>23</td><td>32</td><td>40</td><td>80</td></tr>
+      </table>
+    </details>
+
+    <div class="center"><button class="btn" id="btnNext" type="button" hidden>Siguiente</button></div>
+  </section>
+
+  <!-- PANTALLA FINAL -->
+  <section id="end" class="screen" hidden>
+    <div class="card score-card">
+      <h2 id="endTitle">Resultado</h2>
+      <div class="score" id="endScore">0/10</div>
+      <p id="endMsg"></p>
+      <div class="center" style="margin-top:12px">
+        <button class="btn" id="btnAgain" type="button">Jugar otra vez</button>
+      </div>
+    </div>
+
+    <h2 style="margin-top:28px">Ejercicios resueltos</h2>
+    <p>Revisa cómo se resuelve cada uno. Luego vuelve a jugar para mejorar tu puntaje.</p>
+    <div id="review"></div>
+
+    <div class="center"><button class="btn secondary" id="btnAgain2" type="button">Jugar otra vez</button></div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ===== Preguntas ===== */
+  var QUESTIONS = [
+    {
+      q: "¿Cuántos átomos hay en 1 átomo-gramo de cualquier elemento?",
+      options: [
+        "6,023 × 10<sup>23</sup> átomos (N)",
+        "6,023 × 10<sup>32</sup> átomos",
+        "6,023 × 10<sup>−23</sup> átomos",
+        "1 átomo"
+      ],
+      answer: 0,
+      hint: "Piensa en la docena: son 12 cosas. El «paquete» de los químicos se llama número de Avogadro.",
+      sol: "1 átomo-gramo es la masa atómica del elemento expresada en gramos (por ejemplo, 40 g de calcio).<br>Siempre contiene <strong>N = 6,023 × 10<sup>23</sup> átomos</strong>."
+    },
+    {
+      q: "¿Cuántas moléculas hay en 1 mol-gramo de agua (18 g)?",
+      options: [
+        "N moléculas (6,023 × 10<sup>23</sup>)",
+        "18 moléculas",
+        "18 N moléculas",
+        "2 N moléculas"
+      ],
+      answer: 0,
+      hint: "Halla la masa molecular del agua. ¿Qué pasa cuando tienes exactamente esa cantidad de gramos?",
+      sol: "M(H<sub>2</sub>O) = 2(1) + 16 = 18.<br>18 g es justo <strong>1 mol-gramo</strong>, y 1 mol-gramo contiene <strong>1 N moléculas</strong>."
+    },
+    {
+      q: "Tienes 40 g de calcio (Ca) y 80 g de bromo (Br). ¿Cuál tiene más átomos?",
+      options: [
+        "El calcio, porque es más liviano",
+        "El bromo, porque pesa más",
+        "Los dos tienen la misma cantidad de átomos",
+        "No se puede saber"
+      ],
+      answer: 2,
+      hint: "Compara cada masa con la masa atómica de su elemento: Ca = 40 y Br = 80.",
+      sol: "Calcio: 40 ÷ 40 = <strong>1 N átomos</strong>.<br>Bromo: 80 ÷ 80 = <strong>1 N átomos</strong>.<br>Pesan distinto, pero tienen <strong>la misma cantidad de átomos</strong>: cada átomo de bromo pesa el doble que uno de calcio."
+    },
+    {
+      q: "¿Cuántos átomos existen en 400 g de calcio? (Ca = 40)",
+      options: [
+        "10 N átomos",
+        "100 N átomos",
+        "16 N átomos",
+        "40 N átomos"
+      ],
+      answer: 0,
+      hint: "Regla de tres: 40 g tienen 1 N átomos. ¿Cuántos N tienen 400 g?",
+      sol: "40 g de Ca → 1 N átomos<br>400 g de Ca → x<br>x = 400 ÷ 40 = <strong>10 N átomos</strong>."
+    },
+    {
+      q: "¿Cuántos átomos existen en 460 g de sodio? (Na = 23)",
+      options: [
+        "20 N átomos",
+        "23 N átomos",
+        "10 N átomos",
+        "40 N átomos"
+      ],
+      answer: 0,
+      hint: "Divide los gramos que tienes entre la masa atómica del sodio.",
+      sol: "23 g de Na → 1 N átomos<br>460 g de Na → x<br>x = 460 ÷ 23 = <strong>20 N átomos</strong>."
+    },
+    {
+      q: "¿Cuántas moléculas existen en 1980 g de agua? (H<sub>2</sub>O = 18)",
+      options: [
+        "110 N moléculas",
+        "11 N moléculas",
+        "99 N moléculas",
+        "220 N moléculas"
+      ],
+      answer: 0,
+      hint: "Primero la masa molecular del agua (18). Luego, 1980 ÷ 18.",
+      sol: "M(H<sub>2</sub>O) = 18.<br>18 g → 1 N moléculas<br>1980 g → x<br>x = 1980 ÷ 18 = <strong>110 N moléculas</strong>."
+    },
+    {
+      q: "¿Cuántas moléculas existen en 2940 g de ácido sulfúrico? (H<sub>2</sub>SO<sub>4</sub>)",
+      options: [
+        "30 N moléculas",
+        "3 N moléculas",
+        "300 N moléculas",
+        "60 N moléculas"
+      ],
+      answer: 0,
+      hint: "Suma las masas de todos los átomos: 2 de H, 1 de S y 4 de O.",
+      sol: "M(H<sub>2</sub>SO<sub>4</sub>) = 2(1) + 32 + 4(16) = 98.<br>98 g → 1 N moléculas<br>2940 g → x<br>x = 2940 ÷ 98 = <strong>30 N moléculas</strong>."
+    },
+    {
+      q: "¿Cuántas moléculas hay en 8800 g de anhídrido carbónico? (CO<sub>2</sub>)",
+      options: [
+        "200 N moléculas",
+        "100 N moléculas",
+        "220 N moléculas",
+        "400 N moléculas"
+      ],
+      answer: 0,
+      hint: "El anhídrido carbónico es el CO<sub>2</sub>: 1 átomo de C y 2 de O.",
+      sol: "M(CO<sub>2</sub>) = 12 + 2(16) = 44.<br>44 g → 1 N moléculas<br>8800 g → x<br>x = 8800 ÷ 44 = <strong>200 N moléculas</strong>."
+    },
+    {
+      q: "¿Cuál es el peso de 3 × 10<sup>23</sup> moléculas de agua destilada?",
+      options: [
+        "9 g",
+        "5 g",
+        "18 g",
+        "32 g"
+      ],
+      answer: 0,
+      hint: "3 × 10<sup>23</sup> es casi la mitad de N. ¿Cuánto pesa 1 N moléculas de agua?",
+      sol: "1 N moléculas de agua = 6,023 × 10<sup>23</sup> moléculas = 18 g.<br>6,023 × 10<sup>23</sup> moléculas → 18 g<br>3 × 10<sup>23</sup> moléculas → x<br>x = (3 × 18) ÷ 6,023 ≈ <strong>9 g</strong> (la mitad de 18 g)."
+    },
+    {
+      q: "¿Cuántas moléculas hay en 4592 g de óxido de calcio? (CaO)",
+      options: [
+        "82 N moléculas",
+        "30 N moléculas",
+        "60 N moléculas",
+        "120 N moléculas"
+      ],
+      answer: 0,
+      hint: "CaO tiene 1 átomo de calcio y 1 de oxígeno. Suma sus masas atómicas.",
+      sol: "M(CaO) = 40 + 16 = 56.<br>56 g → 1 N moléculas<br>4592 g → x<br>x = 4592 ÷ 56 = <strong>82 N moléculas</strong>."
+    }
+  ];
+
+  var LETTERS = ["A","B","C","D"];
+  var prepared, idx, score, results, answered;
+
+  function $(id){ return document.getElementById(id); }
+
+  function shuffle(arr){
+    for (var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function show(id){
+    ["start","quiz","end"].forEach(function(s){ $(s).hidden = (s !== id); });
+    window.scrollTo(0, 0);
+  }
+
+  function startGame(){
+    prepared = QUESTIONS.map(function(q){
+      var order = shuffle(q.options.map(function(_, i){ return i; }));
+      return { q: q, order: order };
+    });
+    idx = 0; score = 0; results = []; answered = false;
+    show("quiz");
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    var item = prepared[idx], q = item.q, total = prepared.length;
+    answered = false;
+
+    $("qCounter").textContent = "Pregunta " + (idx + 1) + " de " + total;
+    $("qScore").textContent = "Puntos: " + score;
+    $("progressBar").style.width = (idx / total * 100) + "%";
+    $("progressWrap").setAttribute("aria-valuenow", idx);
+    $("qNum").textContent = "Problema " + (idx + 1);
+    $("qText").innerHTML = q.q;
+
+    var box = $("opts");
+    box.innerHTML = "";
+    item.order.forEach(function(orig, pos){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt";
+      b.setAttribute("data-orig", orig);
+      b.innerHTML = '<span class="letter">' + LETTERS[pos] + '</span><span>' + q.options[orig] + '</span>';
+      b.addEventListener("click", function(){ choose(orig); });
+      box.appendChild(b);
+    });
+
+    $("hintBox").hidden = true;
+    $("hintBox").innerHTML = "";
+    $("btnHint").hidden = false;
+    $("feedback").hidden = true;
+    $("feedback").innerHTML = "";
+    $("btnNext").hidden = true;
+  }
+
+  function choose(orig){
+    if (answered) return;
+    answered = true;
+    var item = prepared[idx], q = item.q;
+    var ok = (orig === q.answer);
+    if (ok) score++;
+    results.push({ ok: ok, chosen: orig });
+
+    var buttons = $("opts").querySelectorAll(".opt");
+    Array.prototype.forEach.call(buttons, function(b){
+      var o = Number(b.getAttribute("data-orig"));
+      b.disabled = true;
+      if (o === q.answer) b.classList.add("correct");
+      else if (o === orig) b.classList.add("wrong");
+      else b.classList.add("dim");
+    });
+
+    var fb = $("feedback");
+    fb.className = "feedback " + (ok ? "ok" : "no");
+    fb.innerHTML =
+      "<h3>" + (ok ? "¡Correcto! +1 punto" : "Casi. Mira cómo se resuelve:") + "</h3>" +
+      '<p class="sol">' + q.sol + "</p>";
+    fb.hidden = false;
+
+    $("qScore").textContent = "Puntos: " + score;
+    $("btnHint").hidden = true;
+    $("hintBox").hidden = true;
+
+    var next = $("btnNext");
+    next.textContent = (idx === prepared.length - 1) ? "Ver resultados" : "Siguiente";
+    next.hidden = false;
+    next.focus();
+  }
+
+  function showHint(){
+    var box = $("hintBox");
+    box.innerHTML = "<strong>Pista:</strong> " + prepared[idx].q.hint;
+    box.hidden = false;
+  }
+
+  function next(){
+    if (idx < prepared.length - 1){
+      idx++;
+      renderQuestion();
+      window.scrollTo(0, 0);
+    } else {
+      finish();
+    }
+  }
+
+  function finish(){
+    var total = prepared.length;
+    $("progressBar").style.width = "100%";
+    $("endScore").textContent = score + "/" + total;
+
+    var title, msg;
+    if (score === total){
+      title = "¡Misión cumplida!";
+      msg = "Perfecto. Ya sabes contar átomos y moléculas pesando. Puedes ayudar a un compañero a entenderlo.";
+    } else if (score >= 8){
+      title = "¡Muy bien!";
+      msg = "Estás muy cerca del 10 de 10. Revisa los ejercicios que fallaste y vuelve a jugar.";
+    } else if (score >= 5){
+      title = "Vas por buen camino";
+      msg = "Ya entiendes la idea. Repasa el paso a paso de abajo y vuelve a intentarlo.";
+    } else {
+      title = "Sigue practicando";
+      msg = "No pasa nada. Lee los ejercicios resueltos con calma, haz la regla de tres en tu cuaderno y juega de nuevo.";
+    }
+    $("endTitle").textContent = title;
+    $("endMsg").textContent = msg;
+
+    var html = "";
+    prepared.forEach(function(item, i){
+      var q = item.q, r = results[i];
+      html +=
+        '<div class="review-item ' + (r.ok ? "ok" : "no") + '">' +
+          '<h3><span class="tag">' + (r.ok ? "✔ Acertaste" : "✘ Fallaste") + "</span> · Problema " + (i + 1) + "</h3>" +
+          "<p>" + q.q + "</p>" +
+          "<p><strong>Respuesta correcta:</strong> " + q.options[q.answer] + "</p>" +
+          "<p>" + q.sol + "</p>" +
+        "</div>";
+    });
+    $("review").innerHTML = html;
+    show("end");
+  }
+
+  $("btnStart").addEventListener("click", startGame);
+  $("btnAgain").addEventListener("click", startGame);
+  $("btnAgain2").addEventListener("click", startGame);
+  $("btnHint").addEventListener("click", showHint);
+  $("btnNext").addEventListener("click", next);
+})();
+</script>
+</body>
+</html>
